@@ -1,0 +1,261 @@
+{
+  "info": {
+    "name": "Verity AI - Bank Loan Verification API",
+    "description": "Complete API collection for the Verity AI bank loan document verification system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:5000/api" },
+    { "key": "token", "value": "YOUR_JWT_TOKEN_HERE" },
+    { "key": "verification_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register (Client)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mohan Kumar\",\n  \"email\": \"mohan@example.com\",\n  \"password\": \"Pass@1234\",\n  \"role\": \"client\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Register (Manager)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bank Manager\",\n  \"email\": \"manager@bank.com\",\n  \"password\": \"Manager@1234\",\n  \"role\": \"manager\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mohan@example.com\",\n  \"password\": \"Pass@1234\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Google OAuth Login",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/google",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"GOOGLE_FIREBASE_ID_TOKEN\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/auth/me",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Upload",
+      "item": [
+        {
+          "name": "Upload Documents",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/upload",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "files", "type": "file", "src": "path/to/salary_slip.pdf" },
+                { "key": "loanType", "value": "personal", "type": "text" },
+                { "key": "processNow", "value": "true", "type": "text" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Poll Upload Status",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/upload/{{verification_id}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verification",
+      "item": [
+        {
+          "name": "Verify Application (by ID)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/verify",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"verificationId\": \"{{verification_id}}\",\n  \"loanType\": \"personal\",\n  \"useAI\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Quick Check (No DB)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/verify/quick-check",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loanType\": \"personal\",\n  \"extractedData\": {\n    \"creditScore\": 720,\n    \"monthlyIncome\": 45000,\n    \"age\": 28,\n    \"workExperienceYears\": 3,\n    \"debtToIncomeRatio\": 0.30,\n    \"loanAmount\": 500000,\n    \"bouncedCheques\": 0,\n    \"averageMonthlyBalance\": 15000\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Verification Detail",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/verify/{{verification_id}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Manager",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/manager/stats",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Get All Requests",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/manager/requests?status=ai_reviewed&page=1&limit=10",
+              "query": [
+                { "key": "status", "value": "ai_reviewed" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Approve Application",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/manager/approve",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"verificationId\": \"{{verification_id}}\",\n  \"comment\": \"All documents verified. Customer profile is strong.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reject Application",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/manager/reject",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"verificationId\": \"{{verification_id}}\",\n  \"reason\": \"Credit score is below the 650 minimum threshold.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Request More Info",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/manager/request-more-info",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"verificationId\": \"{{verification_id}}\",\n  \"message\": \"Please provide your last 6 months bank statements.\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "History",
+      "item": [
+        {
+          "name": "Get My History",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/history?page=1&limit=10",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Get History Detail",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/history/{{verification_id}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Cancel Application",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/history/{{verification_id}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    }
+  ]
+}
