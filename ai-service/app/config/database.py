@@ -28,11 +28,12 @@ async def init_db():
         # Import models here to avoid circular imports
         from app.models.user import User
         from app.models.loan_verification import LoanVerification
+        from app.models.eligibility_submission import EligibilitySubmission
 
         db_name = uri.split("/")[-1].split("?")[0] or "verity_ai"
         await init_beanie(
             database=_client[db_name],
-            document_models=[User, LoanVerification],
+            document_models=[User, LoanVerification, EligibilitySubmission],
         )
         _db_available = True
         logger.info(f"✅ MongoDB connected: {uri}")

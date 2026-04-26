@@ -26,18 +26,18 @@ load_dotenv()
 
 from app.config.database import init_db
 from app.config.logger import get_logger
-from app.routers import auth, upload, verify, manager, history, health
+from app.routers import auth, upload, verify, manager, history, health, zkp, eligibility
 
 logger = get_logger("verity-ai")
 
 # ── Startup / Shutdown ─────────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("🚀 Verity AI Backend starting...")
+    logger.info(" Verity AI Backend starting...")
     await init_db()
-    logger.info(f"🌍 OCR Provider: Google Cloud Vision API")
+    logger.info(f" OCR Provider: Google Cloud Vision API")
     yield
-    logger.info("🛑 Verity AI Backend shutting down.")
+    logger.info(" Verity AI Backend shutting down.")
 
 
 # ── FastAPI App ────────────────────────────────────────────
@@ -70,6 +70,8 @@ app.include_router(health.router,   prefix="/api/health",   tags=["Health"])
 app.include_router(auth.router,     prefix="/api/auth",     tags=["Auth"])
 app.include_router(upload.router,   prefix="/api/upload",   tags=["Upload"])
 app.include_router(verify.router,   prefix="/api/verify",   tags=["Verify"])
+app.include_router(zkp.router,      prefix="/api/zkp",      tags=["ZKP"])
+app.include_router(eligibility.router, prefix="/api/eligibility", tags=["Eligibility"])
 app.include_router(manager.router,  prefix="/api/manager",  tags=["Manager"])
 app.include_router(history.router,  prefix="/api/history",  tags=["History"])
 
